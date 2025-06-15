@@ -55,26 +55,31 @@ async function lineChart() {
       .attr("stroke", "#19394E")
       .attr("stroke-width", "1.5px");
     const tempXAxis = d3.axisBottom(xScale)
-      .ticks(5)
+      .ticks(7)
+      .tickSize(-dimensions.innerHeight)
+      .tickPadding(10)   
       .tickFormat(d3.timeFormat("%Y"));
     const tempXAxisGroup = tempInner.append("g")
       .call(tempXAxis)
       .attr("transform", `translate(0, ${dimensions.innerHeight})`);
     tempXAxisGroup.append("text")
       .attr("x", dimensions.innerWidth / 2)
-      .attr("y", dimensions.margin.bottom - 10)
+      .attr("y", dimensions.margin.bottom - 5)
       .attr("fill", "black")
       .text("Years");
-    const tempYAxis = d3.axisLeft(tempScale);
+    const tempYAxis = d3.axisLeft(tempScale)
+      .tickPadding(10)
+      .tickSize(-dimensions.innerWidth);
     const tempYAxisGroup = tempInner.append("g")
       .call(tempYAxis);
+      
     tempYAxisGroup.append("text")
       .attr("x", -dimensions.innerHeight / 2)
       .attr("y", -dimensions.margin.left + 15)
       .attr("fill", "black")
       .attr("transform", "rotate(-90)")
       .attr("text-anchor", "middle")
-      .text("Temperature");
+      .text("Temperature Anomaly (°C)");
   
     // Temperature tooltip interaction
     tempInner.append("rect")
@@ -106,24 +111,37 @@ async function lineChart() {
       .append("svg")
       .attr("width", dimensions.width)
       .attr("height", dimensions.height);
-    const coInner = coChart.append("g")
+    
+      const coInner = coChart.append("g")
       .attr("transform", `translate(${dimensions.margin.left}, ${dimensions.margin.top})`);
-    coInner.append("path")
+    
+      coInner.append("path")
       .attr("d", coLineGenerator(coData))
       .attr("fill", "none")
       .attr("stroke", "#A2C5DC")
       .attr("stroke-width", 2);
+
     const coXAxis = d3.axisBottom(xScale)
-      .tickFormat(d3.timeFormat("%Y"));
+      .ticks(6)
+      .tickFormat(d3.timeFormat("%Y"))
+      .tickPadding(10)
+      .tickSize(-dimensions.innerHeight)
+
     const coXAxisGroup = coInner.append("g")
       .call(coXAxis)
       .attr("transform", `translate(0, ${dimensions.innerHeight})`);
+
     coXAxisGroup.append("text")
       .attr("x", dimensions.innerWidth / 2)
-      .attr("y", dimensions.margin.bottom - 10)
+      .attr("y", dimensions.margin.bottom - 5)
       .attr("fill", "black")
       .text("Years");
-    const coYAxis = d3.axisLeft(coScale);
+
+    const coYAxis = d3.axisLeft(coScale)
+      .ticks(6)
+      .tickPadding(10)
+      .tickSize(-dimensions.innerWidth);
+
     const coYAxisGroup = coInner.append("g")
       .call(coYAxis);
     coYAxisGroup.append("text")
@@ -132,7 +150,7 @@ async function lineChart() {
       .attr("fill", "black")
       .attr("transform", "rotate(-90)")
       .attr("text-anchor", "middle")
-      .text("CO2");
+      .text("Carbon Dioxide (ppm)");
   
     // CO2 tooltip interaction
     coInner.append("rect")
@@ -177,7 +195,7 @@ async function lineChart() {
         .html(formatTemperature(yVal));
       const xPos = xScale(xVal);
       const yPos = tempScale(yVal);
-      tooltip.style("transform", `translate(calc(-50% + ${xPos}px), calc(-100% + ${yPos}px))`)
+      tooltip.style("transform", `translate(calc(-15% + ${xPos}px), calc(-150% + ${yPos}px))`)
         .style("opacity", 1);
       tooltipline.attr("x1", xPos)
         .attr("x2", xPos)
@@ -207,10 +225,10 @@ async function lineChart() {
       tooltipco2.select("#co2-date")
         .text(formatDate(xVal));
       tooltipco2.select("#co2")
-        .html(`${d3.format(".1f")(yVal)} ppm`);
+        .html(`${d3.format(".0f")(yVal)} ppm`);
       const xPos = xScale(xVal);
       const yPos = coScale(yVal);
-      tooltipco2.style("transform", `translate(calc(-50% + ${xPos}px), calc(-100% + ${yPos}px))`)
+      tooltipco2.style("transform", `translate(calc(-22% + ${xPos}px), calc(-150% + ${yPos}px))`)
         .style("opacity", 1);
       tooltiplineCo.attr("x1", xPos)
         .attr("x2", xPos)
